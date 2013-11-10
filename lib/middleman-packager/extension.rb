@@ -5,34 +5,29 @@ require "middleman-core"
 module Middleman
   module Packager
 
-    class Options < Struct.new(:package_source, :package_mask, :package_cmd_mask, :build_before); end
+    class PkgOptions < Struct.new(:package_source, :package_mask, :package_cmd_mask, :auto_package, :pre_build); end
 
     class << self
 
-      def options
-        @@options
+      def pkgopts
+        @@pkgopts
       end
 
       def registered(app, options_hash={}, &block)
-        options = Options.new(options_hash)
-        yield options if block_given?
-
         # Default options for the rsync method.
-        options.package_source ||= config[:build_dir]
-        options.package_mask ||= "package-{ts}.tgz"
-        options.package_cmd_mask ||= "tar -zcf {to} {from}"
-        options.build_before ||= false
+        defaults = {
+            :package_source => app.config[:build_dir],
+            :package_mask => "package-{ts}.tgz",
+            :package_cmd_mask => "tar -zcf {to} {from}",
+            :pre_build => false,
+            :auto_package => false
+        }
+        # TODO: Refactor this with merge!
+        opts = defaults.merge(options_hash)
+        # opts = PkgOptions.new(options_hash)
+        # yield opts if block_given?
 
-        # Legacy options for Deploy
-        options.port ||= 22
-        options.clean ||= false
-
-        # Default options for the git method.
-        options.remote ||= "origin"
-        options.branch ||= "gh-pages"
-
-
-        @@options = options
+        @@pkgopts = opts
 
         app.send :include, Helpers
       end
@@ -42,8 +37,8 @@ module Middleman
     end
 
     module Helpers
-      def options
-        ::Middleman::Packager.options
+      def pkgopts
+        ::Middleman::Packager.pkgopts
       end
     end
 

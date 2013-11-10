@@ -3,8 +3,8 @@ $:.push File.expand_path("../lib", __FILE__)
 require "middleman-deploy/pkg-info"
 
 Gem::Specification.new do |s|
-  s.name        = Middleman::Packager::PACKAGE
-  s.version     = Middleman::Packager::VERSION
+  s.name        = 'middleman-packager' #Middleman::Packager::PACKAGE
+  s.version     = '0.1' #Middleman::Packager::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Spencer Rhodes"]
   s.email       = ["spencer at spencer dash rhodes dot com"]

@@ -35,6 +35,7 @@ $ middleman package [-b]
 
 _-b_ : pre-build before packaging
 
+_Note: `pack`, `archive`, and `zip` are aliases for `package`._
 ### Config examples
 ###### Block config
 
@@ -77,21 +78,21 @@ Examples:
 
 The command and file sequence mask to use. This mask allows you to easily change your archiving tool if you don't want to use tar. _{to}_ is replaced with the compiled `:package_mask` value, and _{from}_ is replaced with the `:package_source` value. Just make sure you change the `:package_mask` option accordingly!
 
+<!--
 ###### `:auto_package`  _(default: false)_
 
 Should we auto-package after running a build?
 _Note: This is not yet working_
 
-<!--
 ###### `:pre_build`  _(default: false)_
 
 Run a build before creating a package?
 _Note: This is not yet working, though passing the `-b` parameter to the package command does work._
- -->
+-->
+
 ## ToDo
 
  - Get `:pre_build` working
  - Get `:auto_package` working
- - Cleanup gemspec to remove gemspec warnings
  - Run this in `:build` mode rather than `:development` mode (mm-server)
      - Other `:development` extensions are running unnecessarily.

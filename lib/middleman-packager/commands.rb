@@ -80,13 +80,21 @@ module Middleman
         command = (opts[:package_cmd_mask])
                     .gsub(/\{from\}/, "#{opts[:package_source]}")
                     .gsub(/\{to\}/, "#{file_name}")
-        # puts "#{command}"
         run(command)
+        if ($?.success?)
+          # puts "== Your build package is: #{file_name}"
+        else
+          print_usage_and_die "There was a problem creating your build package. Please check your configuration."
+        end
       end
 
     end
 
-    Base.map({ "pack" => "package" })
+    Base.map({
+      "pack" => "package",
+      "zip" => "package",
+      "archive" => "package"
+    })
 
   end
 end

@@ -17,11 +17,11 @@ module Middleman
         # puts "registered() running"
         # Default options for the rsync method.
         defaults = {
-            :package_source => app.config[:build_dir],
+            # :build_before => false,
+            # :auto_package => false,
             :package_mask => "build-{ts:%Y-%m-%d}.tgz",
             :package_cmd_mask => "tar -zcf {to} {from}",
-            :build_before => false,
-            :auto_package => false
+            :package_source => app.config[:build_dir]
         }
         # TODO: Refactor this with merge!
         opts = defaults.merge(options_hash)

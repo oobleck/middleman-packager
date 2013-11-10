@@ -8,6 +8,52 @@ This extension is inspired by the excellent [Middleman Deploy](https://github.co
 ## Requirements
 [Middleman](http://www.middlemanapp.com) 3.0.0+
 
+## Installation
+
+Add this to your Middleman project's Gemfile
+
+```ruby
+gem "middleman-packager"
+```
+and run
+
+```bash
+$ bundle install
+```
+
+## Usage
+Activate the extension in your `config.rb` file:
+
+```ruby
+activate :packager
+```
+
+```bash
+$ middleman build [--clean]
+$ middleman package [-b]
+```
+
+_-b_ : pre-build before packaging
+
+### Config examples
+###### Block config
+
+```ruby
+\# Use zip instead of tar+gzip
+activate :packager do |pack|
+    pack.package_mask = "build-{ts}.zip"
+    pack.package_cmd_mask = "zip -r {to} {from}"
+end
+```
+
+###### Inline config
+
+```ruby
+\# Custom filename mask
+activate :packager,
+    :package_mask => "../packages/my_project_{ts}.tgz"</code></pre>
+```
+
 ## Options
 Default options:
 
@@ -26,36 +72,18 @@ The command and file sequence mask to use. This mask allows you to easily change
 ###### `:auto_package`  _(default: false)_
 
 Should we auto-package after running a build?
-This is not yet working
+_Note: This is not yet working_
 
 ###### `:pre_build`  _(default: false)_
 
-Run a build before creating a package? This is not yet working, though passing the `-b` parameter to the package command does work.
-
-## Usage
-Activate the extension and configure (or use defaults)
-<pre><code>activate :packager</code></pre>
-
-Run `middleman package [-b]` or `middleman pack [-b]`
-
-_-b_ : pre-build before packaging
-
-### Config examples
-###### Block config
-<pre><code># Use zip instead of tar+gzip
-activate :packager do |pack|
-    pack.package_mask = "build-{ts}.zip"
-    pack.package_cmd_mask = "zip -r {to} {from}"
-end</code></pre>
-
-###### Inline config
-<pre><code># Custom filename mask
-activate :packager,
-    :package_mask => "../packages/my_project_{ts}.tgz"</code></pre>
+Run a build before creating a package?
+_Note: This is not yet working, though passing the `-b` parameter to the package command does work._
 
 ## ToDo
- - [Get `:pre_build` working
- - [Get `:auto_package` working
+
+ - Get `:pre_build` working
+ - Get `:auto_package` working
  - Cleanup gemspec to remove gemspec warnings
- - [Run this in `:build` mode rather than `:development` mode (mm-server)
-     - Other `:development` extension are running unneccessarily.
+ - Make the {ts} replacement more robust. Time compatible.
+ - Run this in `:build` mode rather than `:development` mode (mm-server)
+     - Other `:development` extensions are running unneccessarily.

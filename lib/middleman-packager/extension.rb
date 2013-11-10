@@ -5,7 +5,7 @@ require "middleman-core"
 module Middleman
   module Packager
 
-    class PkgOptions < Struct.new(:package_source, :package_mask, :package_cmd_mask, :auto_package, :pre_build); end
+    class PkgOptions < Struct.new(:package_source, :package_mask, :package_cmd_mask, :auto_package, :build_before); end
 
     class << self
 
@@ -14,12 +14,13 @@ module Middleman
       end
 
       def registered(app, options_hash={}, &block)
+        # puts "registered() running"
         # Default options for the rsync method.
         defaults = {
             :package_source => app.config[:build_dir],
-            :package_mask => "package-{ts}.tgz",
+            :package_mask => "build-{ts:%Y-%m-%d}.tgz",
             :package_cmd_mask => "tar -zcf {to} {from}",
-            :pre_build => false,
+            :build_before => false,
             :auto_package => false
         }
         # TODO: Refactor this with merge!
@@ -41,6 +42,7 @@ module Middleman
         ::Middleman::Packager.pkgopts
       end
     end
+
 
   end
 end

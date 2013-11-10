@@ -41,7 +41,7 @@ _-b_ : pre-build before packaging
 ```ruby
 \# Use zip instead of tar+gzip
 activate :packager do |pack|
-    pack.package_mask = "build-{ts}.zip"
+    pack.package_mask = "build-{ts:%Y-%m-%d}.tgz"
     pack.package_cmd_mask = "zip -r {to} {from}"
 end
 ```
@@ -63,7 +63,15 @@ The source file/folder of your package.
 
 ###### `:package_mask`  _(default: "build-{ts}.tgz")_
 
-A filename mask to use as the target archive. Use {ts} for the generated timestamp. Accepts relative or absolute file paths, though relative is recommended!
+A filename mask to use as the target archive file. Accepts relative or absolute file paths, though relative is recommended!
+
+Use `{ts[:time_format_string]}` for the generated timestamp. Optionally, you can pass a standard [Ruby Time formatting string](http://www.ruby-doc.org/core-2.0.0/Time.html#method-i-strftime) to control the timestamp output, or leave off the `:stuff` for a general timestamp.
+
+Examples:
+```ruby
+"build-{ts}.tgz" # => "build-1384121876.tgz"
+"build-{ts:%Y-%m-%d}.tgz" # => "build-2013-11-10.tgz"
+```
 
 ###### `:package_cmd_mask`  _(default: "tar -zcf {to} {from}")_
 
@@ -74,16 +82,16 @@ The command and file sequence mask to use. This mask allows you to easily change
 Should we auto-package after running a build?
 _Note: This is not yet working_
 
+<!--
 ###### `:pre_build`  _(default: false)_
 
 Run a build before creating a package?
 _Note: This is not yet working, though passing the `-b` parameter to the package command does work._
-
+ -->
 ## ToDo
 
  - Get `:pre_build` working
  - Get `:auto_package` working
  - Cleanup gemspec to remove gemspec warnings
- - Make the {ts} replacement more robust. Time compatible.
  - Run this in `:build` mode rather than `:development` mode (mm-server)
-     - Other `:development` extensions are running unneccessarily.
+     - Other `:development` extensions are running unnecessarily.

@@ -20,45 +20,31 @@ module Middleman
       end
 
       desc "package [options]", Middleman::Packager::TAGLINE
-      method_option "pre_build",
+      method_option "build_before",
         :type => :boolean,
         :aliases => "-b",
         :desc => "Run `middleman build` before the package step"
 
       def package
-        if options.has_key? "pre_build"
-          pre_build = options.pre_build
+        # puts "package running"
+        if options.has_key? "build_before"
+          build_before = options.build_before
         else
-          pre_build = self.options.pre_build
+          build_before = self.options.build_before
         end
-        if pre_build
+        if build_before
           # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
           bundler = File.exist?('Gemfile')
           run("#{bundler ? 'bundle exec ' : ''}middleman build") || exit(1)
         end
-        puts "cmd: pre_build? #{pre_build}"
-        if options.auto_package
-          app.after_build do |builder|
-            send("package_run")
-          end
-        else
-        end
-          send("package_run")
+        send("package_run")
       end
 
       protected
 
       def print_usage_and_die(message)
-        raise Error, "\nERROR: " + message + "\n" + <<EOF
-  [Default settings]
-  activate #{:packager.inspect} do |conf|
-    conf.package_source = config[:build_dir]
-    conf.package_mask = "build-{ts}.tgz"
-    conf.package_cmd_mask = "tar -zcf {to} {from}"
-    conf.auto_package = false
-    conf.pre_build = false
-  end
-EOF
+        # raise Error, "\nERROR: " + message + "\n" + <<EOF\n EOF
+        raise Error, "\nERROR: " + message + "\n"
       end # of print_usage_and_dir
 
       def inst
@@ -82,12 +68,20 @@ EOF
       end
 
       def package_run
-          timestamp = Time.now.to_i
-          file_name = (self.opts[:package_mask]).gsub(/\{(ts|timestamp)\}/i, "#{timestamp}")
-          command = (self.opts[:package_cmd_mask])
-                      .gsub(/\{from\}/, "#{self.opts[:package_source]}")
-                      .gsub(/\{to\}/, "#{file_name}")
-          run("#{command}")
+        # http://www.ruby-doc.org/core-2.0.0/Time.html#method-i-strftime
+        opts = self.opts
+        time = Time.now()
+        timestamp = time.to_i
+        if opts[:package_mask].match(/{(ts|timestamp):.+}/)
+          format = (opts[:package_mask].match(/{(ts|timestamp):(?<format>.+)}/))[:format]
+          timestamp = time.strftime(format)
+        end
+        file_name = (opts[:package_mask]).gsub(/{(ts|timestamp):?.*}/i, "#{timestamp}")
+        command = (opts[:package_cmd_mask])
+                    .gsub(/\{from\}/, "#{opts[:package_source]}")
+                    .gsub(/\{to\}/, "#{file_name}")
+        # puts "#{command}"
+        run(command)
       end
 
     end
